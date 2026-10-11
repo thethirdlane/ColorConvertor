@@ -26,6 +26,8 @@ import com.formdev.flatlaf.FlatLaf
 import org.slf4j.LoggerFactory
 import org.ttl.events.ColorEvents
 import org.ttl.events.eventCentral
+import org.ttl.themes.ThemeManager
+import org.ttl.themes.themeManager
 import ttl.kotdsls.swing.Gbc
 import ttl.kotdsls.swing.button
 import ttl.kotdsls.swing.gbc
@@ -34,8 +36,6 @@ import ttl.kotdsls.swing.panel
 import ttl.kotdsls.swing.textField
 import ttl.kotdsls.swing.ui.getMinFontSizeForScreen
 import ttl.kotdsls.swing.ui.setUIMinFontSize
-import org.ttl.themes.ThemeManager
-import org.ttl.themes.themeManager
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Font
@@ -65,11 +65,9 @@ var RB: Properties = Properties()
 
 class ColorConvertorGui(title: String) : JFrame(title) {
 
-    val mainPanel: JPanel
-
     val iconFile = "rgb.png"
 
-    lateinit var foregroundPanel: JPanel
+    var foregroundPanel: JPanel
     lateinit var foregroundRGB: JTextField
     lateinit var foregroundHEX: JTextField
     lateinit var fgRGBCopyButton: JButton
@@ -81,7 +79,7 @@ class ColorConvertorGui(title: String) : JFrame(title) {
     lateinit var displayfgPanel: JPanel
     lateinit var displayfgText: JTextField
 
-    lateinit var backgroundPanel: JPanel
+    var backgroundPanel: JPanel
     lateinit var backgroundRGB: JTextField
     lateinit var backgroundHEX: JTextField
     lateinit var bgRGBCopyButton: JButton
@@ -106,48 +104,42 @@ class ColorConvertorGui(title: String) : JFrame(title) {
         layout = GridBagLayout()
 
         var gbc = gbc(weightx = 1.0, weighty = 1.0, fill = Gbc.BOTH, insets = Insets(10, 10, 10, 10))
-        mainPanel = panel(layoutConstraint = gbc) {
+//            gbc = gbc(fill = Gbc.NONE)
+        foregroundPanel = panel(layoutConstraint = gbc) {
             layout = GridBagLayout()
 
-            //Foreground Panel
-            gbc = gbc(weightx = 1.0, weighty = 1.0, fill = Gbc.BOTH, insets = Insets(0, 10, 0, 10))
-//            gbc = gbc(fill = Gbc.NONE)
-            foregroundPanel = panel(layoutConstraint = gbc) {
-                layout = GridBagLayout()
-
-                //Title Label
-                gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, anchor = Gbc.CENTER,
-                    insets = Insets(0, 0, 10, 0))
-                label(layoutConstraint = gbc, text = "Choose Foreground")
+            //Title Label
+            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, anchor = Gbc.CENTER,
+                insets = Insets(0, 0, 10, 0))
+            label(layoutConstraint = gbc, text = "Choose Foreground")
 
 
-                gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 10, 10))
-                label(layoutConstraint = gbc, text = "RGB[A]:")
-                gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 10))
-                foregroundRGB = textField(layoutConstraint = gbc)
-                gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
-                fgRGBCopyButton = button(layoutConstraint = gbc, text = "C") {
-                    toolTipText = "Copy"
-                }
-                gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
-                fgRGBPasteButton = button(layoutConstraint = gbc, text = "P") {
-                    toolTipText = "Paste"
-                }
-
-                gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 0, 10))
-                label(layoutConstraint = gbc, text = "HEX:")
-                gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 10))
-                foregroundHEX = textField(layoutConstraint = gbc)
-                gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
-                fgHEXCopyButton = button(layoutConstraint = gbc, text = "C") {
-                    toolTipText = "Copy"
-                }
-                gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
-                fgHEXPasteButton = button(layoutConstraint = gbc, text = "P") {
-                    toolTipText = "Paste"
-                }
-
+            gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 10, 10))
+            label(layoutConstraint = gbc, text = "RGB[A]:")
+            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 10))
+            foregroundRGB = textField(layoutConstraint = gbc)
+            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
+            fgRGBCopyButton = button(layoutConstraint = gbc, text = "C") {
+                toolTipText = "Copy"
             }
+            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
+            fgRGBPasteButton = button(layoutConstraint = gbc, text = "P") {
+                toolTipText = "Paste"
+            }
+
+            gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 0, 10))
+            label(layoutConstraint = gbc, text = "HEX:")
+            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 10))
+            foregroundHEX = textField(layoutConstraint = gbc)
+            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
+            fgHEXCopyButton = button(layoutConstraint = gbc, text = "C") {
+                toolTipText = "Copy"
+            }
+            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
+            fgHEXPasteButton = button(layoutConstraint = gbc, text = "P") {
+                toolTipText = "Paste"
+            }
+
         }
         //Display Panel
         gbc = gbc(weightx = 1.0, weighty = 1.0, fill = Gbc.BOTH)
@@ -424,7 +416,11 @@ class ColorConvertor {
             val hex = if (arr.size == 3) {
                 String.format("#%02X%02X%02X", arr[0].trim().toInt(), arr[1].trim().toInt(), arr[2].trim().toInt())
             } else {
-                String.format("#%02X%02X%02X%02X", arr[0].trim().toInt(), arr[1].trim().toInt(), arr[2].trim().toInt(), arr[3].trim().toInt())
+                String.format("#%02X%02X%02X%02X",
+                    arr[0].trim().toInt(),
+                    arr[1].trim().toInt(),
+                    arr[2].trim().toInt(),
+                    arr[3].trim().toInt())
             }
 
             val output = if (doingForeground) gui.foregroundHEX else gui.backgroundHEX
