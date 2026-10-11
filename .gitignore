@@ -1,0 +1,52 @@
+**/tileserver.properties
+
+colorconvertornative
+
+**/target/
+**/bin/
+**/build/
+**/out/
+**/*.class
+
+### Emacs ######
+**/*~
+**/*#
+**/#*
+
+### STS ###
+.apt_generated
+**/.classpath
+**/.factorypath
+**/.project
+**/.settings
+**/.springBeans
+**/.sts4-cache
+**/.metadata
+
+### IntelliJ IDEA ###
+**/.idea
+**/*.iws
+**/*.iml
+**/*.ipr
+
+### NetBeans ###
+**/nbproject
+**/nbbuild/
+**/dist/
+**/nbdist/
+**/.nb-gradle/
+
+#misc
+**/.attach*
+**/.hprof
+**/.metadata/
+**/loginfofile
+*.so
+
+### VS Code ###
+.vscode/
+
+#vi swap files
+**/*.swp
+
+logs/

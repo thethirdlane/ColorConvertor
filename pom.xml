@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.ttl</groupId>
+    <artifactId>ColorConvertor</artifactId>
+    <version>1.0</version>
+    <name>ColorConvertor</name>
+    <packaging>jar</packaging>
+    <description>Convert Colors between RGB and HEX</description>
+
+    <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.version>2.3.0</kotlin.version>
+        <kotlin.coroutines.swing.version>1.10.2</kotlin.coroutines.swing.version>
+        <kotlin.coroutines.version>1.10.2</kotlin.coroutines.version>
+        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+
+        <junit5.version>5.5.1</junit5.version>
+        <logback.version>1.5.7</logback.version>
+        <jackson.version>2.12.5</jackson.version>
+        <native.maven.plugin.version>0.10.2</native.maven.plugin.version>
+
+        <flat-laf-version>3.4.1</flat-laf-version>
+
+        <skipTests>true</skipTests>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core</artifactId>
+            <version>${kotlin.coroutines.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-swing</artifactId>
+            <version>${kotlin.coroutines.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ttl.whirltime.swingdsl</groupId>
+            <artifactId>SwingDSL</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- Swing look and feel -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>${flat-laf-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>${flat-laf-version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <!-- First, Maven Central -->
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <!-- For WSL we point at the share using the wsl syntax-->
+        <repository>
+            <id>trellis-repo1</id>
+            <name>trellis repo</name>
+            <url>file:/mnt/r/repositories/m2/repository</url>
+        </repository>
+        <!-- For Windows we point at the share using the share syntax-->
+        <repository>
+            <id>trellis-repo2</id>
+            <name>trellis repo2</name>
+            <url>file://///trellis/otherhomey/repositories/.mym2/repository</url>
+        </repository>
+    </repositories>
+
+
+    <build>
+        <!--        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>-->
+        <!--        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>-->
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <compilerArgs>
+                        <!--                        <arg>&#45;&#45;enable-preview</arg>-->
+
+                        <arg>--add-exports</arg>
+                        <arg>java.base/sun.nio.ch=ALL-UNNAMED</arg>
+
+                        <arg>--add-exports</arg>
+                        <arg>java.desktop/com.sun.java.swing=ALL-UNNAMED</arg>
+
+                        <arg>--add-opens</arg>
+                        <arg>java.base/sun.nio.ch=ALL-UNNAMED</arg>
+
+                        <arg>--add-opens</arg>
+                        <arg>java.desktop/com.sun.java.swing=ALL-UNNAMED</arg>
+
+                        <arg>--add-opens</arg>
+                        <arg>java.base/java.lang=ALL-UNNAMED</arg>
+                        <!--
+                        <argLine>
+                           -add-exports java.base/sun.nio.ch==ALL-UNNAMED
+                           -add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                           -add-opens java.base/java.util=ALL-UNNAMED
+                        </argLine>
+                        -->
+                    </compilerArgs>
+                    <!--                    <source>${maven.compiler.source}</source>-->
+                    <!--                    <target>${maven.compiler.target}</target>-->
+                </configuration>
+
+                <executions>
+                    <!-- Replacing default-compile as it is treated specially by maven -->
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <!-- Replacing default-testCompile as it is treated specially by maven -->
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>java-test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includeScope>runtime</includeScope>
+                    <outputDirectory>${project.basedir}/apppackage</outputDirectory>
+                    <overWriteReleases>true</overWriteReleases>
+                    <overWriteSnapshots>true</overWriteSnapshots>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.2</version>
+
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>apppackage/</classpathPrefix>
+                            <mainClass>org.ttl.color.ColorConvertorApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.ttl.color.ColorConvertorApp</mainClass>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                    <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                </manifest>
+                                <manifestEntries>
+                                    <Specification-Vendor>The Third Lane</Specification-Vendor>
+                                    <Implementation-Vendor>The Third Lane</Implementation-Vendor>
+                                </manifestEntries>
+                            </archive>
+
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--            <plugin>-->
+            <!--                <groupId>org.openjfx</groupId>-->
+            <!--                <artifactId>javafx-maven-plugin</artifactId>-->
+            <!--                <version>0.0.8</version>-->
+            <!--&lt;!&ndash;                <configuration>&ndash;&gt;-->
+            <!--&lt;!&ndash;                    <mainClass>hellofx/org.openjfx.App</mainClass>&ndash;&gt;-->
+            <!--&lt;!&ndash;                </configuration>&ndash;&gt;-->
+            <!--            </plugin>-->
+
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${native.maven.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <!--                                <phase>package</phase>-->
+                            </execution>
+                            <!--                            <execution>-->
+                            <!--                                <id>test-native</id>-->
+                            <!--                                <goals>-->
+                            <!--                                    <goal>test</goal>-->
+                            <!--                                </goals>-->
+                            <!--                                <phase>test</phase>-->
+                            <!--                            </execution>-->
+                        </executions>
+                        <configuration>
+                            <imageName>../colorconvertornative</imageName>
+                            <mainClass>org.ttl.color.ColorConvertorApp</mainClass>
+                            <fallback>false</fallback>
+                            <systemProperties>
+                                <java.awt.headless>false</java.awt.headless>
+                                <sun.java2d.debugFonts>true</sun.java2d.debugFonts>
+                            </systemProperties>
+                            <buildArgs>
+                                <buildArg>--initialize-at-build-time=org.geotools.util.logging.Logging$LogLevel
+                                </buildArg>
+                                <buildArg>--initialize-at-run-time=javax.sound.sampled.AudioSystem</buildArg>
+                                <buildArg>--initialize-at-run-time=com.sun.media.sound.JDKService </buildArg>
+                                <buildArg>--initialize-at-run-time=ch.qos.logback</buildArg>
+                                <buildArg>-H:+UnlockExperimentalVMOptions</buildArg>
+                                <buildArg>-H:ConfigurationFileDirectories=config_r25_nik</buildArg>
+                                <!--                                <buildArg>-H:ConfigurationFileDirectories=config_agent</buildArg>-->
+                                <buildArg>-H:+AddAllCharsets</buildArg>
+                                <buildArg>-H:Log=registerResource:5</buildArg>
+                                <buildArg>--verbose</buildArg>
+                                <buildArg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</buildArg>
+                                <buildArg>--add-exports=java.desktop/com.sun.java.swing=ALL-UNNAMED</buildArg>
+                                <buildArg>--add-opens=java.base/sun.nio.ch=ALL-UNNAMED</buildArg>
+                                <buildArg>--add-opens=java.desktop/com.sun.java.swing=ALL-UNNAMED</buildArg>
+                                <buildArg>--add-opens=java.base/java.lang=ALL-UNNAMED</buildArg>
+                                <buildArg>--enable-url-protocols=https</buildArg>
+                            </buildArgs>
+                            <!--                            <agent>-->
+                            <!--                                <enabled>true</enabled>-->
+                            <!--                                <options>-->
+                            <!--                                    <option>experimental-class-loader-support</option>-->
+                            <!--                                </options>-->
+                            <!--                            </agent>-->
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
