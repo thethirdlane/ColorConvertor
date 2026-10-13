@@ -880,6 +880,9 @@
       "type": "java.awt.SequencedEvent"
     },
     {
+      "type": "java.awt.event.ActionListener[]"
+    },
+    {
       "type": "java.awt.event.KeyEvent",
       "jniAccessible": true,
       "fields": [
@@ -1731,6 +1734,17 @@
       "type": "javax.swing.SwingContainer"
     },
     {
+      "type": "javax.swing.plaf.basic.BasicComboBoxUI",
+      "methods": [
+        {
+          "name": "loadActionMap",
+          "parameterTypes": [
+            "javax.swing.plaf.basic.LazyActionMap"
+          ]
+        }
+      ]
+    },
+    {
       "type": "javax.swing.plaf.basic.BasicGraphicsUtils",
       "methods": [
         {
@@ -1949,6 +1963,18 @@
     },
     {
       "type": "javax.swing.plaf.nimbus.ComboBoxPainter",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "javax.swing.plaf.nimbus.AbstractRegionPainter$PaintContext",
+            "int"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "javax.swing.plaf.nimbus.ComboBoxTextFieldPainter",
       "methods": [
         {
           "name": "<init>",

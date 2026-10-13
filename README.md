@@ -48,6 +48,11 @@ is possible to do.
 - If you have built the native executable, simple run it:
   `./colorconvertornative`
 
+- Important - When running from IntelliJ, set this property:
+  - `-Dsun.awt.disablegrab=true`
+    Else IntelliJ freezes the whole desktop sometimes when debugging, e.g.
+    with JComboBoxes.
+   
 ## Using
 - Type something in one format and hit enter.  It is converted into the other
 format.

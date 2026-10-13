@@ -1,11 +1,13 @@
 package org.ttl.color.utils
 
 import org.ttl.color.ColorConvertor.Companion.logger
+import org.ttl.color.ui.postActionEvent
 import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
 import java.util.Locale.getDefault
+import javax.swing.JComboBox
 import javax.swing.JTextField
 
 
@@ -60,6 +62,18 @@ fun hexStringToColorAndHexString(input: String): Pair<Color, String>? {
     }
 
     return null
+}
+
+fun colorToRGBString(color: Color): String {
+    val str = String.format("%d, %d, %d, %d", color.red,
+        color.green, color.blue, color.alpha)
+    return str
+}
+
+fun colorToHEXString(color: Color): String {
+    val str = String.format("#%02X%02X%02X%02X",
+        color.red, color.green, color.blue, color.alpha)
+    return str
 }
 
 fun setRGBTextFieldFromColor(color: Color, textField: JTextField) {
@@ -159,19 +173,49 @@ fun HSL.toColor(): Color {
     )
 }
 
+fun copy(comboBox: JComboBox<*>) {
+    val item = comboBox.selectedItem.toString()
+    val text = item
+    copy(text)
+}
+
 fun copy(textField: JTextField) {
     val text = textField.text
+    copy(text)
+}
+
+fun copy(text: String) {
     val selection = StringSelection(text)
     Toolkit.getDefaultToolkit().systemClipboard.setContents(selection, selection)
 }
 
+fun paste(comboBox: JComboBox<String>) {
+    getStringFromClipboard()?.let { pastedText ->
+//        comboBox.addItem(pastedText)
+        comboBox.postActionEvent("comboBoxEdited:$pastedText")
+    }
+}
+
 fun paste(textField: JTextField) {
+    getStringFromClipboard()?.let { pastedText ->
+//    val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+//    val transferable = clipboard.getContents(null)
+//    if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+//        val pastedText = transferable.getTransferData(DataFlavor.stringFlavor) as String
+//        textField.text = pastedText
+//    }
+
+        textField.text = pastedText
+        textField.postActionEvent()
+    }
+}
+
+fun getStringFromClipboard() : String? {
     val clipboard = Toolkit.getDefaultToolkit().systemClipboard
     val transferable = clipboard.getContents(null)
     if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
         val pastedText = transferable.getTransferData(DataFlavor.stringFlavor) as String
-        textField.text = pastedText
+        return pastedText
     }
-
-    textField.postActionEvent()
+   return null
 }
