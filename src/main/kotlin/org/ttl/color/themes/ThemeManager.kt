@@ -21,15 +21,15 @@ SOFTWARE.
 */
 //@file:JvmName("ThemeManager")
 
-package org.ttl.themes
+package org.ttl.color.themes
 
 import com.formdev.flatlaf.FlatDarculaLaf
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatIntelliJLaf
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.FlatLightLaf
-import org.ttl.events.ColorEvents
-import org.ttl.events.eventCentral
+import org.ttl.color.events.ColorEvents
+import org.ttl.color.events.eventCentral
 import ttl.kotdsls.swing.Gbc
 import ttl.kotdsls.swing.button
 import ttl.kotdsls.swing.dialog

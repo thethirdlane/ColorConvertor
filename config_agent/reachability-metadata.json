@@ -463,6 +463,15 @@
       ]
     },
     {
+      "type": "com.formdev.flatlaf.ui.FlatMarginBorder",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.formdev.flatlaf.ui.FlatMenuBarBorder",
       "methods": [
         {
@@ -568,6 +577,17 @@
       ]
     },
     {
+      "type": "com.formdev.flatlaf.ui.FlatTextAreaUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
       "type": "com.formdev.flatlaf.ui.FlatTextBorder",
       "methods": [
         {
@@ -578,6 +598,17 @@
     },
     {
       "type": "com.formdev.flatlaf.ui.FlatTextFieldUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.formdev.flatlaf.ui.FlatToolTipUI",
       "methods": [
         {
           "name": "createUI",
@@ -687,6 +718,17 @@
     },
     {
       "type": "com.sun.java.swing.plaf.motif.MotifScrollPaneUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.java.swing.plaf.motif.MotifTextAreaUI",
       "methods": [
         {
           "name": "createUI",
@@ -941,7 +983,13 @@
           "name": "VK_LEFT"
         },
         {
+          "name": "VK_N"
+        },
+        {
           "name": "VK_O"
+        },
+        {
+          "name": "VK_P"
         },
         {
           "name": "VK_PAGE_DOWN"
@@ -1387,7 +1435,8 @@
       ]
     },
     {
-      "type": "java.lang.String"
+      "type": "java.lang.String",
+      "serializable": true
     },
     {
       "type": "java.lang.System",
@@ -1622,7 +1671,13 @@
       "type": "javax.swing.JTableHeader"
     },
     {
-      "type": "javax.swing.JTextArea"
+      "type": "javax.swing.JTextArea",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "javax.swing.JTextField",
@@ -1725,7 +1780,29 @@
       ]
     },
     {
+      "type": "javax.swing.plaf.basic.BasicPopupMenuUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
       "type": "javax.swing.plaf.basic.BasicRootPaneUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "javax.swing.plaf.basic.BasicTextAreaUI",
       "methods": [
         {
           "name": "createUI",
@@ -1747,6 +1824,28 @@
       ]
     },
     {
+      "type": "javax.swing.plaf.metal.MetalButtonUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "javax.swing.plaf.metal.MetalComboBoxUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
       "type": "javax.swing.plaf.metal.MetalLabelUI",
       "methods": [
         {
@@ -1758,7 +1857,51 @@
       ]
     },
     {
+      "type": "javax.swing.plaf.metal.MetalMenuBarUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
       "type": "javax.swing.plaf.metal.MetalRootPaneUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "javax.swing.plaf.metal.MetalScrollBarUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "javax.swing.plaf.metal.MetalScrollPaneUI",
+      "methods": [
+        {
+          "name": "createUI",
+          "parameterTypes": [
+            "javax.swing.JComponent"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "javax.swing.plaf.metal.MetalTextFieldUI",
       "methods": [
         {
           "name": "createUI",
@@ -1898,6 +2041,18 @@
       ]
     },
     {
+      "type": "javax.swing.plaf.nimbus.TextAreaPainter",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "javax.swing.plaf.nimbus.AbstractRegionPainter$PaintContext",
+            "int"
+          ]
+        }
+      ]
+    },
+    {
       "type": "javax.swing.plaf.nimbus.TextFieldPainter",
       "methods": [
         {
@@ -1961,6 +2116,18 @@
     },
     {
       "type": "org.ttl.color.ColorConvertorGui"
+    },
+    {
+      "type": "org.ttl.color.themes.ThemeManager$createThemeComboBox$1"
+    },
+    {
+      "type": "org.ttl.color.ui.ColorConvertorGui"
+    },
+    {
+      "type": "org.ttl.color.ui.ColorPanel"
+    },
+    {
+      "type": "org.ttl.color.ui.SuggestionsPanel"
     },
     {
       "type": "sun.awt.SunHints",
@@ -3146,6 +3313,15 @@
       "type": "sun.text.resources.BreakIteratorResources_en_US"
     },
     {
+      "type": "sun.text.resources.cldr.FormatData"
+    },
+    {
+      "type": "sun.text.resources.cldr.FormatData_en"
+    },
+    {
+      "type": "sun.text.resources.cldr.FormatData_en_US"
+    },
+    {
       "type": "ttl.soundoodle.themes.ThemeManager$createThemeComboBox$1"
     }
   ],
@@ -3215,6 +3391,9 @@
     },
     {
       "glob": "logback.xml"
+    },
+    {
+      "glob": "rgb.png"
     },
     {
       "glob": "themes/FlatDarculaLaf.properties"

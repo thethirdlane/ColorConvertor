@@ -20,12 +20,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package org.ttl.events
+package org.ttl.color.events
 
 /**
  * @author whynot
  */
 
 enum class ColorEvents {
+    RGBInput,
+    RGBCopied,
+
+    HEXInput,
+    HEXCopied,
+
+    InitialValues,
+    Copy,
+    Paste,
+    Suggest,
+
     ThemeChanged,
 }

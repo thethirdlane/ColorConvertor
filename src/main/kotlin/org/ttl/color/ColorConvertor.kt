@@ -22,234 +22,29 @@ SOFTWARE.
 
 package org.ttl.color
 
-import com.formdev.flatlaf.FlatLaf
 import org.slf4j.LoggerFactory
-import org.ttl.events.ColorEvents
-import org.ttl.events.eventCentral
-import org.ttl.themes.ThemeManager
-import org.ttl.themes.themeManager
-import ttl.kotdsls.swing.Gbc
-import ttl.kotdsls.swing.button
-import ttl.kotdsls.swing.gbc
-import ttl.kotdsls.swing.label
-import ttl.kotdsls.swing.panel
-import ttl.kotdsls.swing.textField
+import org.ttl.color.events.ColorEvents
+import org.ttl.color.events.eventCentral
+import org.ttl.color.themes.ThemeManager
+import org.ttl.color.themes.themeManager
+import org.ttl.color.ui.ColorConvertorGui
+import org.ttl.color.utils.ColorPaletteGenerator
+import org.ttl.color.utils.setHEXTextFieldFromColor
+import org.ttl.color.utils.setRGBTextFieldFromColor
 import ttl.kotdsls.swing.ui.getMinFontSizeForScreen
 import ttl.kotdsls.swing.ui.setUIMinFontSize
 import java.awt.Color
-import java.awt.Dimension
-import java.awt.Font
-import java.awt.GridBagLayout
-import java.awt.Insets
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
-import java.io.File
-import java.io.FileReader
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.*
 import java.util.Locale.getDefault
-import javax.swing.BorderFactory
-import javax.swing.ImageIcon
-import javax.swing.JButton
-import javax.swing.JComboBox
 import javax.swing.JFrame
-import javax.swing.JMenuBar
-import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.UIManager
 import javax.swing.plaf.FontUIResource
 
 var RB: Properties = Properties()
-
-class ColorConvertorGui(title: String) : JFrame(title) {
-
-    val iconFile = "rgb.png"
-
-    var foregroundPanel: JPanel
-    lateinit var foregroundRGB: JTextField
-    lateinit var foregroundHEX: JTextField
-    lateinit var fgRGBCopyButton: JButton
-    lateinit var fgRGBPasteButton: JButton
-    lateinit var fgHEXCopyButton: JButton
-    lateinit var fgHEXPasteButton: JButton
-
-    lateinit var displayPanel: JPanel
-    lateinit var displayfgPanel: JPanel
-    lateinit var displayfgText: JTextField
-
-    var backgroundPanel: JPanel
-    lateinit var backgroundRGB: JTextField
-    lateinit var backgroundHEX: JTextField
-    lateinit var bgRGBCopyButton: JButton
-    lateinit var bgRGBPasteButton: JButton
-    lateinit var bgHEXCopyButton: JButton
-    lateinit var bgHEXPasteButton: JButton
-    val themeBox: JComboBox<ThemeManager.ThemeOption>
-
-    init {
-        //Make the icon for the app
-        val iconURL = this.javaClass.classLoader.getResource(iconFile)
-        if (iconURL != null) {
-            val appIcon = ImageIcon(iconURL).image
-            this.iconImage = appIcon
-        }
-        initTheme()
-        themeBox = themeManager.createThemeComboBox()
-        val menuBar = JMenuBar()
-        menuBar.add(themeBox)
-        this.jMenuBar = menuBar
-
-        layout = GridBagLayout()
-
-        var gbc = gbc(weightx = 1.0, weighty = 1.0, fill = Gbc.BOTH, insets = Insets(10, 10, 10, 10))
-//            gbc = gbc(fill = Gbc.NONE)
-        foregroundPanel = panel(layoutConstraint = gbc) {
-            layout = GridBagLayout()
-
-            //Title Label
-            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, anchor = Gbc.CENTER,
-                insets = Insets(0, 0, 10, 0))
-            label(layoutConstraint = gbc, text = "Choose Foreground")
-
-
-            gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 10, 10))
-            label(layoutConstraint = gbc, text = "RGB[A]:")
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 10))
-            foregroundRGB = textField(layoutConstraint = gbc)
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
-            fgRGBCopyButton = button(layoutConstraint = gbc, text = "C") {
-                toolTipText = "Copy"
-            }
-            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
-            fgRGBPasteButton = button(layoutConstraint = gbc, text = "P") {
-                toolTipText = "Paste"
-            }
-
-            gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 0, 10))
-            label(layoutConstraint = gbc, text = "HEX:")
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 10))
-            foregroundHEX = textField(layoutConstraint = gbc)
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
-            fgHEXCopyButton = button(layoutConstraint = gbc, text = "C") {
-                toolTipText = "Copy"
-            }
-            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
-            fgHEXPasteButton = button(layoutConstraint = gbc, text = "P") {
-                toolTipText = "Paste"
-            }
-
-        }
-        //Display Panel
-        gbc = gbc(weightx = 1.0, weighty = 1.0, fill = Gbc.BOTH)
-        panel(layoutConstraint = gbc) {
-            layout = GridBagLayout()
-            val mb = BorderFactory.createMatteBorder(2, 1, 1, 1, foreground)
-            border = BorderFactory.createTitledBorder(mb, "Display Panel")
-            minimumSize = Dimension(500, 400)
-//        gbc = gbc(weightx = 1.0, weighty = 1.0, fill = Gbc.BOTH)
-            displayPanel = panel(layoutConstraint = gbc) {
-                layout = GridBagLayout()
-
-                gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE)
-                displayfgText = textField(layoutConstraint = gbc, text = "A lazy cow sidestepped the moon.").apply {
-                    border = BorderFactory.createEmptyBorder()
-                    background = Color(0, 0, 0, 0)
-                    columns = 20
-                    font = Font("Helvitica", Font.PLAIN, 28)
-                }
-            }
-        }
-
-        //Background Panel
-        gbc = gbc(weightx = 1.0, weighty = 1.0, fill = Gbc.BOTH, insets = Insets(0, 10, 0, 10))
-        backgroundPanel = panel(layoutConstraint = gbc) {
-            layout = GridBagLayout()
-
-            //Title Label
-            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, anchor = Gbc.CENTER,
-                insets = Insets(0, 0, 10, 0))
-            label(layoutConstraint = gbc, text = "Choose Background")
-
-
-            gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 10, 10))
-            label(layoutConstraint = gbc, text = "RGB[A]:")
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 10))
-            backgroundRGB = textField(layoutConstraint = gbc)
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
-            bgRGBCopyButton = button(layoutConstraint = gbc, text = "C") {
-                toolTipText = "Copy"
-            }
-
-            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
-            bgRGBPasteButton = button(layoutConstraint = gbc, text = "P") {
-                toolTipText = "Paste"
-            }
-
-
-            gbc = gbc(fill = Gbc.NONE, anchor = Gbc.EAST, insets = Insets(0, 0, 0, 10))
-            label(layoutConstraint = gbc, text = "HEX:")
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 10))
-            backgroundHEX = textField(layoutConstraint = gbc)
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
-            bgHEXCopyButton = button(layoutConstraint = gbc, text = "C") {
-                toolTipText = "Copy"
-            }
-
-            gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
-            bgHEXPasteButton = button(layoutConstraint = gbc, text = "P") {
-                toolTipText = "Paste"
-            }
-        }
-    }
-
-    fun initTheme() {
-        //So that graalvm is happy
-        val userHome = System.getProperty("user.home")
-        val userDir = System.getProperty("user.dir")
-        if (System.getProperty("java.home") == null) {
-            System.setProperty("java.home", userDir)
-        }
-        //Now we are using FlatLaf.  A great discovery
-        System.setProperty("flatlaf.uiScale", "2.0")
-
-        //Look for properties files
-        var propFileDir = "$userHome/.anaclock"
-
-        val propFileName = System.getProperty("colorconvertor.properties") ?: "$propFileDir/colorconvertor.properties"
-
-        RB = loadProps(userHome, propFileName)
-
-        //The LookAndFeel will be set up in the
-        //ThemManager constructor
-        themeManager = ThemeManager(RB)
-        val lAndFName = themeManager.currentTheme.className
-
-        FlatLaf.registerCustomDefaultsSource("themes")
-        FlatLaf.registerCustomDefaultsSource(File(propFileDir))
-        UIManager.setLookAndFeel(lAndFName)
-        FlatLaf.updateUI()
-
-    }
-
-
-    fun loadProps(directory: String,
-                  propFileName: String = "${directory}/.colorconvertor/colorconvertor.properties"): Properties {
-        val props = Properties()
-        //Look for properties files
-        //Can override normal location with -D otherlocation at runtime.
-        val fileToUse = System.getProperty("whirltime.properties") ?: propFileName
-
-        if (Files.exists(Paths.get(fileToUse))) {
-//            val p = Properties(baseProps)
-
-            props.load(FileReader(fileToUse))
-        }
-
-        return props
-    }
-}
 
 class ColorConvertor {
     val gui = ColorConvertorGui("Color Convertor")
@@ -259,85 +54,43 @@ class ColorConvertor {
     }
 
     init {
-        gui.foregroundRGB.addActionListener { event ->
-            handleRGBClicked(true)
-        }
-
-        gui.fgRGBCopyButton.addActionListener { event ->
-//            handleRGBClicked(true)
-            copy(gui.foregroundRGB)
-        }
-        gui.fgRGBPasteButton.addActionListener { event ->
-//            handleRGBClicked(true)
-            paste(gui.foregroundRGB)
-        }
-
-        gui.foregroundHEX.addActionListener { event ->
-            handleHEXClicked(true)
-        }
-
-        gui.fgHEXCopyButton.addActionListener { event ->
-//            handleHEXClicked(true)
-            copy(gui.foregroundHEX)
-        }
-
-        gui.fgHEXPasteButton.addActionListener { event ->
-//            handleRGBClicked(true)
-            paste(gui.foregroundHEX)
-        }
-
-        gui.backgroundRGB.addActionListener { event ->
-            handleRGBClicked(false)
-        }
-
-        gui.bgRGBCopyButton.addActionListener { event ->
-            copy(gui.backgroundRGB)
-        }
-
-        gui.bgRGBPasteButton.addActionListener { event ->
-            paste(gui.backgroundRGB)
-        }
-
-        gui.backgroundHEX.addActionListener { event ->
-            handleHEXClicked(false)
-        }
-
-        gui.bgHEXCopyButton.addActionListener { event ->
-//            handleHEXClicked(false)
-            copy(gui.backgroundHEX)
-        }
-
-        gui.bgHEXPasteButton.addActionListener { event ->
-//            handleHEXClicked(false)
-            paste(gui.backgroundHEX)
-        }
-
-        setInitialValues()
-        gui.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-
 
         eventCentral.addObserver(this, ColorEvents.ThemeChanged) { _, args ->
-            setInitialValues()
+//            eventCentral.shoutOut(ColorEvents.InitialValues, listOf(this@ColorConvertor,
+//                gui.displayPanel.foreground, gui.displayPanel.background))
         }
+
+        eventCentral.addObserver(this, ColorEvents.RGBInput) { event, args ->
+            val panelName = args[1] as String
+            val color = args[2] as Color
+            val hextText = args[3] as String
+
+            val doingForeground = (panelName.lowercase(getDefault()).contains("foreground"))
+            handleRGBClicked(color, hextText, doingForeground)
+        }
+
+        eventCentral.addObserver(this, ColorEvents.HEXInput) { event, args ->
+            val panelName = args[1] as String
+            val color = args[2] as Color
+            val hexText = args[3] as String
+
+            val doingForeground = (panelName.lowercase(getDefault()).contains("foreground"))
+            handleHEXClicked(color, hexText, doingForeground)
+        }
+
+        gui.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+
     }
 
     fun show() {
 //        gui.size = Dimension(1500, 400)
         gui.pack()
         gui.isVisible = true
+
+        eventCentral.shoutOut(ColorEvents.InitialValues, listOf(this@ColorConvertor,
+            gui.displayPanel.foreground, gui.displayPanel.background))
     }
 
-    fun setInitialValues() {
-        val bg = gui.displayPanel.background
-        gui.backgroundRGB.text = "${bg.red}, ${bg.green}, ${bg.blue}, ${bg.alpha}"
-        gui.backgroundHEX.text = String.format("#%02X%02X%02X%02X",
-            bg.red, bg.green, bg.blue, bg.alpha)
-
-        val fg = gui.displayfgText.foreground
-        gui.foregroundRGB.text = "${fg.red}, ${fg.green}, ${fg.blue}, ${fg.alpha}"
-        gui.foregroundHEX.text = String.format("#%02X%02X%02X%02X", fg.red, fg.green, fg.blue, fg.alpha)
-
-    }
 
     fun copy(textField: JTextField) {
         val text = textField.text
@@ -352,89 +105,84 @@ class ColorConvertor {
             val pastedText = transferable.getTransferData(DataFlavor.stringFlavor) as String
             textField.text = pastedText
         }
+
+        textField.postActionEvent()
     }
 
-    fun handleHEXClicked(doingForeground: Boolean) {
+    fun handleHEXClicked(color: Color, hexText: String, doingForeground: Boolean) {
         try {
-            var input = if (doingForeground) gui.foregroundHEX else gui.backgroundHEX
-
-            var hexText = input.text.uppercase(getDefault())
-            if (hexText.startsWith("#")) {
-                hexText = hexText.substring(1)
-            }
-            val regex = "(..)".toRegex()
-
-            val matches = regex.findAll(hexText).toList()
-//            println("matches: $matches")
-//            matches.forEach { println(it.value) }
-
-            if (matches.size < 3 || matches.size > 4) {
-                println("WTF")
-            } else {
-                val color = if (matches.size == 3) {
-                    Color(matches.get(0).value.hexToInt(),
-                        matches.get(1).value.hexToInt(),
-                        matches.get(2).value.hexToInt())
-                } else {
-                    Color(matches.get(0).value.hexToInt(), matches.get(1).value.hexToInt(),
-                        matches.get(2).value.hexToInt(), matches.get(3).value.hexToInt())
-                }
-
-
-                val rgbOutput = if (doingForeground) gui.foregroundRGB else gui.backgroundRGB
-                rgbOutput.text = "${color.red}, ${color.green}, ${color.blue}, ${color.alpha}"
-                val hexOutput = if (doingForeground) gui.foregroundHEX else gui.backgroundHEX
-                hexOutput.text = "#$hexText"
-
-                if (doingForeground) {
-                    gui.displayfgText.foreground = color
-                } else {
-                    gui.displayPanel.background = color
-                }
-            }
-            gui.repaint()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    fun handleRGBClicked(doingForeground: Boolean) {
-        try {
-            val input = if (doingForeground) gui.foregroundRGB.text else gui.backgroundRGB.text
-            val arr = input.split(",\\s*".toRegex()).toTypedArray()
-            if (arr.size < 3 || arr.size > 4) {
-                logger.error("Input should be 3 or 4 comma seperated RGB[A] between 0 and 255")
-                return
-            }
-
-            val color = if (arr.size == 3) {
-                Color(arr[0].trim().toInt(), arr[1].trim().toInt(), arr[2].trim().toInt())
-            } else {
-                Color(arr[0].trim().toInt(), arr[1].trim().toInt(), arr[2].trim().toInt(), arr[3].trim().toInt())
-            }
-
-            val hex = if (arr.size == 3) {
-                String.format("#%02X%02X%02X", arr[0].trim().toInt(), arr[1].trim().toInt(), arr[2].trim().toInt())
-            } else {
-                String.format("#%02X%02X%02X%02X",
-                    arr[0].trim().toInt(),
-                    arr[1].trim().toInt(),
-                    arr[2].trim().toInt(),
-                    arr[3].trim().toInt())
-            }
-
-            val output = if (doingForeground) gui.foregroundHEX else gui.backgroundHEX
-            output.text = hex
-
             if (doingForeground) {
                 gui.displayfgText.foreground = color
             } else {
                 gui.displayPanel.background = color
             }
+//            handleSuggestions(color)
             gui.repaint()
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun handleRGBClicked(color: Color, hexText: String, doingForeground: Boolean) {
+        try {
+            if (doingForeground) {
+                gui.displayfgText.foreground = color
+            } else {
+                gui.displayPanel.background = color
+            }
+
+//            handleSuggestions(color)
+            gui.repaint()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Voodoo color magic from Gemini to suggest an alternate color.
+     * If you keep flip flopping with these suggestions, you end up
+     * with some variation of black and white.
+     */
+    fun getSuggestedBackground(inputColor: Color): Color {
+        val yiq = (inputColor.red * 299 + inputColor.green * 587 + inputColor.blue * 114) / 1000
+
+        return if (yiq >= 128) {
+            // Foreground is light -> suggest a deep, muted dark shade
+            Color(
+                (inputColor.red * 0.15).toInt(),
+                (inputColor.green * 0.15).toInt(),
+                (inputColor.blue * 0.15).toInt()
+            )
+        } else {
+            // Foreground is dark -> suggest a soft, tinted light background
+            Color(
+                Math.min(255, (inputColor.red + (255 - inputColor.red) * 0.85).toInt()),
+                Math.min(255, (inputColor.green + (255 - inputColor.green) * 0.85).toInt()),
+                Math.min(255, (inputColor.blue + (255 - inputColor.blue) * 0.85).toInt())
+            )
+        }
+    }
+
+    fun handleSuggestions(color: Color) {
+        val otherColor = getSuggestedBackground(color)
+        setRGBTextFieldFromColor(otherColor, gui.complementarySuggestion.suggestionRGB)
+        setHEXTextFieldFromColor(otherColor, gui.complementarySuggestion.suggestionHEX)
+
+        updateColorSuggestions(color, false)
+        println("otherColor: $otherColor")
+    }
+
+
+    // Example inside your Swing Controller/Panel logic
+    fun updateColorSuggestions(selectedColor: Color, isForegroundPick: Boolean) {
+        val pastelBg = ColorPaletteGenerator.getAnalogousSuggestion(selectedColor)
+        val cleanBg = ColorPaletteGenerator.getMonochromaticSuggestion(selectedColor)
+        val boldBg = ColorPaletteGenerator.getComplementarySuggestion(selectedColor)
+
+        // Update your UI suggestion swatches or buttons with these colors
+        // suggestionButton1.background = pastelBg
+        // suggestionButton2.background = cleanBg
+        // suggestionButton3.background = boldBg
     }
 }
 

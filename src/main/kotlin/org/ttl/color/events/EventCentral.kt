@@ -22,7 +22,7 @@ SOFTWARE.
 
 @file:JvmName("EventCentral")
 
-package org.ttl.events
+package org.ttl.color.events
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -30,11 +30,15 @@ import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.atomic.LongAdder
 import kotlin.concurrent.thread
 
 val eventCentral = Eventer()
 
 class Eventer {
+   var eventCountSerial = LongAdder()
+   var eventCountAsync = LongAdder()
+   var eventTime  = 0L
    private val logger = LoggerFactory.getLogger(this::class.java)
 
 //    private var listenerFuncs: ConcurrentMap<Any, MutableSet<(Any, List<Any>) -> Unit>> = ConcurrentHashMap();
@@ -118,6 +122,8 @@ class Eventer {
 
             functions.forEach { function ->
                function(event, args)
+
+               eventCountSerial.increment()
             }
          }
       }
@@ -207,6 +213,7 @@ class Eventer {
                Thread.ofVirtual().name("ECShoutOutThread").start {
                   function(event, args)
                }
+               eventCountAsync.increment()
             }
          }
       }

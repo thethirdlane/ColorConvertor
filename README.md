@@ -52,8 +52,15 @@ is possible to do.
 - Type something in one format and hit enter.  It is converted into the other
 format.
 - Foreground and Background affect the Display Panel.
-- C and P do Copy/Paste
+- `C` and `P` do Copy/Paste
 - ComboBox in the north changes Look And Feel
+- `Suggest` buttons offer some suggestions for colors for the
+"other side" of the panel, i.e Foreground suggests Background
+colors and vice versa.  It runs a bunch of algorithms which i have
+copied and pasted from Gemini.  I have no idea how good the algorithms
+are, and have noticed that they tend to loose the plot when you you have
+rgb numbers higher than around 160 - the colors suggested suddenly become
+too dark.
 
 ## Implementation Notes 
 - Written in Kotlin
