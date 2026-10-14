@@ -10,8 +10,9 @@ import java.util.Locale.getDefault
 import javax.swing.JComboBox
 import javax.swing.JTextField
 
+data class ColorAndHex(val color: Color, val hexText: String)
 
-fun rgbStringToColorAndHexString(rgbString: String): Pair<Color, String>? {
+fun rgbStringToColorAndHexString(rgbString: String): ColorAndHex? {
     val arr = rgbString.split(",\\s*".toRegex()).toTypedArray()
     if (arr.size < 3 || arr.size > 4) {
         logger.error("Input should be 3 or 4 comma seperated RGB[A] between 0 and 255")
@@ -34,10 +35,10 @@ fun rgbStringToColorAndHexString(rgbString: String): Pair<Color, String>? {
             arr[3].trim().toInt())
     }
 
-    return color to hex
+    return ColorAndHex(color, hex)
 }
 
-fun hexStringToColorAndHexString(input: String): Pair<Color, String>? {
+fun hexStringToColorAndHexString(input: String): ColorAndHex? {
     var hexText = input.uppercase(getDefault())
     if (hexText.startsWith("#")) {
         hexText = hexText.substring(1)
@@ -58,7 +59,7 @@ fun hexStringToColorAndHexString(input: String): Pair<Color, String>? {
                 matches.get(2).value.hexToInt(), matches.get(3).value.hexToInt())
         }
 
-        return color to hexText
+        return ColorAndHex(color, hexText)
     }
 
     return null

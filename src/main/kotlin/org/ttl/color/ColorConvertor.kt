@@ -194,6 +194,7 @@ object ColorConvertorApp {
     @JvmStatic
     fun main(args: Array<String>) {
         //Set this here so you don't need to set is as a property on the command line
+        System.setProperty("sun.awt.disablegrab", "true")
         System.setProperty("sun.java2d.opengl", "true");
 
         themeManager = ThemeManager(RB)

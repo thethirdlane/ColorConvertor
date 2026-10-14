@@ -1,6 +1,5 @@
 package org.ttl.color.ui
 
-import javafx.scene.paint.Color.color
 import org.ttl.color.events.ColorEvents
 import org.ttl.color.events.eventCentral
 import org.ttl.color.utils.colorToHEXString
@@ -9,8 +8,6 @@ import org.ttl.color.utils.copy
 import org.ttl.color.utils.hexStringToColorAndHexString
 import org.ttl.color.utils.paste
 import org.ttl.color.utils.rgbStringToColorAndHexString
-import org.ttl.color.utils.setHEXTextFieldFromColor
-import org.ttl.color.utils.setRGBTextFieldFromColor
 import ttl.kotdsls.swing.Gbc
 import ttl.kotdsls.swing.button
 import ttl.kotdsls.swing.gbc
@@ -23,15 +20,14 @@ import java.util.Locale.getDefault
 import javax.swing.JButton
 import javax.swing.JComboBox
 import javax.swing.JPanel
-import javax.swing.JTextField
 import javax.swing.UIManager
 
 class ColorPanel(val title: String) : JPanel() {
     val mainPanel: JPanel
-    lateinit var rgbTextField: JTextField
+
     lateinit var rgbCopyButton: JButton
     lateinit var rgbPasteButton: JButton
-    lateinit var hexTextField: JTextField
+
     lateinit var hexCopyButton: JButton
     lateinit var hexPasteButton: JButton
     lateinit var suggestButton: JButton
@@ -71,36 +67,39 @@ class ColorPanel(val title: String) : JPanel() {
                     // Check if action was triggered by user input (e.g. typing and pressing Enter)
 //                    if (event.actionCommand == "comboBoxEdited" || event.actionCommand == "comboBoxChanged") {
 //                    if (event.actionCommand == "comboBoxEdited" ) {
+                    //If the user entered new text, we need to add it to this
+                    //ComboBox and to the other one.
+                    //The actionCommand will be appended by ":paste_data" if
+                    //the event was triggered by a Paste.
                     if (event.actionCommand.startsWith("comboBoxEdited")) {
                         val input = if (event.actionCommand.indexOf(":") != -1)
                             event.actionCommand.removePrefix("comboBoxEdited:")
                         else
                             editor.item?.toString()?.trim()
                         if (!input.isNullOrBlank()) {
-                            // Adding to the model automatically manages max size
-//                            (this.model as LimitedComboBoxModel<String>).addElement(input)
                             val p = rgbStringToColorAndHexString(input)
                             p?.let {
-                                val color = p.first
-                                val hexText = p.second
-                                if (event.actionCommand != "comboBoxChanged") {
-                                    (this.model as LimitedComboBoxModel<String>).addElement(input)
-                                    hexPreviousBox.addItem(hexText)
-                                } else {
-                                }
-//                                setHEXTextFieldFromColor(color, hexTextField)
+                                val color = p.color
+                                val hexText = p.hexText
+                                //Add it to our Model
+                                (this.model as LimitedComboBoxModel<String>).addElement(input)
+                                hexPreviousBox.addItem(hexText)
+                                //And let the world know that a new item has been added/selected
                                 eventCentral.shoutOut(ColorEvents.RGBInput, listOf(this@ColorPanel,
                                     title, color, hexText))
                             }
                         }
                     } else if (event.actionCommand == "comboBoxChanged") {
+                        //The user selected a different item, so we
+                        //synchronous our list with the other ComboBox
+                        //and let the world know that a new item has been selected.
                         val ourIndex = rgbPreviousBox.selectedIndex
                         if (ourIndex >= 0 && ourIndex < hexPreviousBox.itemCount) {
                             hexPreviousBox.selectedIndex = ourIndex
                             rgbPreviousBox.selectedItem?.let { item ->
                                 rgbStringToColorAndHexString(item.toString())?.let { p ->
                                     eventCentral.shoutOut(ColorEvents.RGBInput, listOf(this@ColorPanel,
-                                        title, p.first, p.second))
+                                        title, p.color, p.hexText))
                                 }
                             }
                         }
@@ -110,45 +109,18 @@ class ColorPanel(val title: String) : JPanel() {
             gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 10))
             add(rgbPreviousBox, gbc)
 
-            gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 10))
-//            rgbTextField = textField(layoutConstraint = gbc) {
-            rgbTextField = JTextField().apply {//(layoutConstraint = gbc) {
-                addActionListener { event ->
-                    val source = event.source as JTextField
-                    val p = rgbStringToColorAndHexString(source.text)
-                    p?.let {
-                        val color = p.first
-                        val hexText = p.second
-                        setHEXTextFieldFromColor(color, hexTextField)
-                        eventCentral.shoutOut(ColorEvents.RGBInput, listOf(this@ColorPanel,
-                            title, color, hexText))
-                    }
-                }
-            }
-//            add(rgbTextField, gbc)
-
             gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
             rgbCopyButton = button(layoutConstraint = gbc, text = "C") {
                 toolTipText = "Copy"
                 addActionListener { event ->
-                    copy(rgbTextField)
                     copy(rgbPreviousBox)
-
-//                //Let them know a copy happened
-//                eventCentral.shoutOut(ColorEvents.Copy, listOf(this@ColorPanel,
-//                    title, rgbTextField.text))
                 }
             }
             gbc = gbc(w = Gbc.REMAINDER, fill = Gbc.NONE, insets = Insets(0, 0, 10, 0))
             rgbPasteButton = button(layoutConstraint = gbc, text = "P") {
                 toolTipText = "Paste"
                 addActionListener { event ->
-                    paste(rgbTextField)
                     paste(rgbPreviousBox)
-
-//                //Let them know a copy happened
-//                eventCentral.shoutOut(ColorEvents.Paste, listOf(this@ColorPanel,
-//                    title, rgbTextField.text))
                 }
             }
 
@@ -163,6 +135,10 @@ class ColorPanel(val title: String) : JPanel() {
                     // Check if action was triggered by user input (e.g. typing and pressing Enter)
 //                    if (event.actionCommand == "comboBoxEdited" || event.actionCommand == "comboBoxChanged") {
 //                    if (event.actionCommand == "comboBoxEdited" ||
+                    //If the user entered new text, we need to add it to this
+                    //ComboBox and to the other one.
+                    //The actionCommand will be appended by ":paste_data" if
+                    //the event was triggered by a Paste.
                     if (event.actionCommand.startsWith("comboBoxEdited")) {
                         val input = if (event.actionCommand.indexOf(":") != -1)
                             event.actionCommand.removePrefix("comboBoxEdited:")
@@ -171,28 +147,31 @@ class ColorPanel(val title: String) : JPanel() {
                         if (!input.isNullOrBlank()) {
 
                             hexStringToColorAndHexString(input)?.let { p ->
-                                val color = p.first
-                                val hexText = p.second
+                                val color = p.color
+                                val hexText = p.hexText
                                 val colorStr = colorToRGBString(color)
-                                if (event.actionCommand != "comboBoxChanged") {
-                                    (this.model as LimitedComboBoxModel<String>).addElement(input)
-                                    rgbPreviousBox.addItem(colorStr)
-                                } else {
-                                }
+                                //Add the new item to our model
+                                (this.model as LimitedComboBoxModel<String>).addElement(input)
+                                //And to the other Box
+                                rgbPreviousBox.addItem(colorStr)
 
+                                //And let the world know that we have new input.
                                 eventCentral.shoutOut(ColorEvents.HEXInput, listOf(this@ColorPanel,
                                     title, color, hexText))
 
                             }
                         }
                     } else if (event.actionCommand == "comboBoxChanged") {
+                        //The user selected a different item, so we
+                        //synchronous our list with the other ComboBox
+                        //and let the world know that a new item has been selected.
                         val ourIndex = hexPreviousBox.selectedIndex
                         if (ourIndex >= 0 && ourIndex < rgbPreviousBox.itemCount) {
                             rgbPreviousBox.selectedIndex = ourIndex
                             hexPreviousBox.selectedItem?.let { item ->
                                 hexStringToColorAndHexString(item.toString())?.let { p ->
                                     eventCentral.shoutOut(ColorEvents.HEXInput, listOf(this@ColorPanel,
-                                        title, p.first, p.second))
+                                        title, p.color, p.hexText))
                                 }
                             }
                         }
@@ -202,31 +181,11 @@ class ColorPanel(val title: String) : JPanel() {
             gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 10, 10))
             add(hexPreviousBox, gbc)
 
-//            hexTextField = textField(layoutConstraint = gbc) {
-            hexTextField = JTextField().apply {//(layoutConstraint = gbc) {
-                addActionListener { event ->
-                    val source = event.source as JTextField
-                    val p = hexStringToColorAndHexString(source.text)
-                    p?.let {
-                        val color = p.first
-                        val hexText = p.second
-                        //Set our other fields
-                        setRGBTextFieldFromColor(color, rgbTextField)
-
-                        //Let the world know we god hex input
-                        eventCentral.shoutOut(ColorEvents.HEXInput, listOf(this@ColorPanel,
-                            title, color, hexText))
-                    }
-                }
-            }
-            gbc = gbc(fill = Gbc.HORIZONTAL, insets = Insets(0, 0, 0, 10))
-            //add(hexTextField, gbc)
 
             gbc = gbc(fill = Gbc.NONE, insets = Insets(0, 0, 0, 0))
             hexCopyButton = button(layoutConstraint = gbc, text = "C") {
                 toolTipText = "Copy"
                 addActionListener { event ->
-                    copy(hexTextField)
                     copy(hexPreviousBox)
                 }
 
@@ -235,7 +194,6 @@ class ColorPanel(val title: String) : JPanel() {
             hexPasteButton = button(layoutConstraint = gbc, text = "P") {
                 toolTipText = "Paste"
                 addActionListener { event ->
-                    paste(hexTextField)
                     paste(hexPreviousBox)
                 }
             }
@@ -248,11 +206,13 @@ class ColorPanel(val title: String) : JPanel() {
                 suggestButton = button(layoutConstraint = gbc, text = "Suggest") {
                     toolTipText = "Suggest Colors for the opposite side"
                     addActionListener { event ->
-                        rgbStringToColorAndHexString(rgbTextField.text)?.let {
-                            val color = it.first
-                            val hexText = it.second
-                            eventCentral.shoutOut(ColorEvents.Suggest, listOf(this@ColorPanel,
-                                title, color, hexText))
+                        rgbPreviousBox.selectedItem?.let {
+                            rgbStringToColorAndHexString(it.toString())?.let {
+                                val color = it.color
+                                val hexText = it.hexText
+                                eventCentral.shoutOut(ColorEvents.Suggest, listOf(this@ColorPanel,
+                                    title, color, hexText))
+                            }
                         }
                     }
                 }
@@ -267,15 +227,15 @@ class ColorPanel(val title: String) : JPanel() {
                             UIManager.getColor("Panel.background")
                         }
 
-                        setRGBTextFieldFromColor(defaultColor, rgbTextField)
-                        setHEXTextFieldFromColor(defaultColor, hexTextField)
                         val rgbStr = colorToRGBString(defaultColor)
                         rgbPreviousBox.addItem(rgbStr)
                         val hexStr = colorToHEXString(defaultColor)
                         hexPreviousBox.addItem(hexStr)
 
-                        eventCentral.shoutOut(ColorEvents.RGBInput, listOf(this@ColorPanel,
-                            title, defaultColor, hexTextField.text))
+                        hexPreviousBox.selectedItem?.let {
+                            eventCentral.shoutOut(ColorEvents.RGBInput, listOf(this@ColorPanel,
+                                title, defaultColor, it.toString()))
+                        }
                     }
                 }
             }
@@ -285,16 +245,6 @@ class ColorPanel(val title: String) : JPanel() {
         eventCentral.addObserver(this, ColorEvents.InitialValues) { event, args ->
             val fg = args[1] as Color
             val bg = args[2] as Color
-
-            if (isForeground()) {
-                setRGBTextFieldFromColor(fg, rgbTextField)
-                setHEXTextFieldFromColor(fg, hexTextField)
-
-            } else {
-                setRGBTextFieldFromColor(bg, rgbTextField)
-                setHEXTextFieldFromColor(bg, hexTextField)
-
-            }
 
             val rgbStr = if (isForeground()) colorToRGBString(fg)
             else colorToRGBString(bg)
