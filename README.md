@@ -48,10 +48,10 @@ is possible to do.
 - If you have built the native executable, simple run it:
   `./colorconvertornative`
 
-- Important - When running from IntelliJ, set this property:
+- Important - When running from IntelliJ on linux, set this property:
   - `-Dsun.awt.disablegrab=true`
     Else IntelliJ freezes the whole desktop sometimes when debugging, e.g.
-    with JComboBoxes.
+    with JComboBoxes.  This may or may not apply to your particular distribution.
    
 ## Using
 - Type something in one format and hit enter.  It is converted into the other
@@ -78,3 +78,5 @@ And you wind up cursing the cursor.  And the developer.
 
 ## License
 MIT License
+
+Enjoy.
