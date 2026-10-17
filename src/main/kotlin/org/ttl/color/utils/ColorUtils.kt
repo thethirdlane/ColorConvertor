@@ -10,7 +10,11 @@ import java.util.Locale.getDefault
 import javax.swing.JComboBox
 import javax.swing.JTextField
 
-data class ColorAndHex(val color: Color, val hexText: String)
+data class HSL(val hue: Float, val saturation: Float, val lightness: Float) {
+    val toText = String.format("%.03g, %.03g, %.03g", hue, saturation, lightness)
+}
+
+data class ColorAndHex(val color: Color, val hexText: String, val hsl: HSL = color.toHSL())
 
 fun rgbStringToColorAndHexString(rgbString: String): ColorAndHex? {
     val arr = rgbString.split(",\\s*".toRegex()).toTypedArray()
@@ -25,6 +29,8 @@ fun rgbStringToColorAndHexString(rgbString: String): ColorAndHex? {
         Color(arr[0].trim().toInt(), arr[1].trim().toInt(), arr[2].trim().toInt(), arr[3].trim().toInt())
     }
 
+    val hsl = color.toHSL()
+
     val hex = if (arr.size == 3) {
         String.format("#%02X%02X%02X", arr[0].trim().toInt(), arr[1].trim().toInt(), arr[2].trim().toInt())
     } else {
@@ -35,17 +41,19 @@ fun rgbStringToColorAndHexString(rgbString: String): ColorAndHex? {
             arr[3].trim().toInt())
     }
 
-    return ColorAndHex(color, hex)
+    return ColorAndHex(color, hex, hsl)
 }
 
 fun hexStringToColorAndHexString(input: String): ColorAndHex? {
     var hexText = input.uppercase(getDefault())
-    if (hexText.startsWith("#")) {
-        hexText = hexText.substring(1)
-    }
+    val ttu = if (hexText.startsWith("#")) {
+        hexText.substring(1)
+    } else
+        hexText
+
     val regex = "(..)".toRegex()
 
-    val matches = regex.findAll(hexText).toList()
+    val matches = regex.findAll(ttu).toList()
 //            println("matches: $matches")
 //            matches.forEach { println(it.value) }
 
@@ -59,10 +67,30 @@ fun hexStringToColorAndHexString(input: String): ColorAndHex? {
                 matches.get(2).value.hexToInt(), matches.get(3).value.hexToInt())
         }
 
-        return ColorAndHex(color, hexText)
+        return ColorAndHex(color, hexText, color.toHSL())
     }
 
     return null
+}
+
+fun hslStringToColorAndHex(hslString: String): ColorAndHex? {
+    val arr = hslString.split(",\\s*".toRegex()).toTypedArray()
+    if (arr.size < 3 || arr.size > 4) {
+        logger.error("Input should be 3 or 4 comma seperated RGB[A] between 0 and 255")
+        return null
+    }
+
+    val hsl = HSL(arr[0].trim().toFloat(), arr[1].trim().toFloat(), arr[2].trim().toFloat())
+
+    val color = hsl.toColor()
+
+    val hex = if (arr.size == 3) {
+        String.format("#%02X%02X%02X", color.red, color.green, color.blue)
+    } else {
+        String.format("#%02X%02X%02X", color.red, color.green, color.blue, color.alpha)
+    }
+
+    return ColorAndHex(color, hex, hsl)
 }
 
 fun colorToRGBString(color: Color): String {
@@ -74,6 +102,11 @@ fun colorToRGBString(color: Color): String {
 fun colorToHEXString(color: Color): String {
     val str = String.format("#%02X%02X%02X%02X",
         color.red, color.green, color.blue, color.alpha)
+    return str
+}
+
+fun hslToHSLString(hsl: HSL) : String {
+    val str = String.format("%.3g, %.3g, %.3g, %.3gd", hsl.hue, hsl.saturation, hsl.lightness)
     return str
 }
 
@@ -123,7 +156,6 @@ fun hexToColor(hexStr: String): Color? {
     }
     return color
 }
-data class HSL(val hue: Float, val saturation: Float, val lightness: Float)
 
 fun Color.toHSL(): HSL {
     val r = red / 255.0f
@@ -175,10 +207,16 @@ fun HSL.toColor(): Color {
 }
 
 fun copy(comboBox: JComboBox<*>) {
-    val item = comboBox.selectedItem.toString()
-    val text = item
-    copy(text)
+    val editorText = (comboBox.editor.editorComponent as JTextField).text
+    val item = comboBox.selectedItem as ColorAndHex
+    val textToCopy = if(editorText.contains(","))
+        colorToRGBString(item.color)
+    else
+        item.hexText
+    copy(textToCopy)
 }
+
+//242, 242, 242, 255
 
 fun copy(textField: JTextField) {
     val text = textField.text
@@ -190,7 +228,7 @@ fun copy(text: String) {
     Toolkit.getDefaultToolkit().systemClipboard.setContents(selection, selection)
 }
 
-fun paste(comboBox: JComboBox<String>) {
+fun paste(comboBox: JComboBox<*>) {
     getStringFromClipboard()?.let { pastedText ->
 //        comboBox.addItem(pastedText)
         comboBox.postActionEvent("comboBoxEdited:$pastedText")

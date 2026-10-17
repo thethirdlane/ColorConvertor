@@ -1,7 +1,7 @@
 # Color Convertor
 
 This is a very (very) simple program for converting colors from
-RGB to HEX and back.  No fancy color pickers or color wheels,
+RGB to HEX to HSI and back.  No fancy color pickers or color wheels,
 just basic cut and paste.  It came to be because none of the available
 color pickers on ubuntu were working for me.
 
@@ -55,7 +55,7 @@ is possible to do.
    
 ## Using
 - Type something in one format and hit enter.  It is converted into the other
-format.
+formats.
 - Foreground and Background affect the Display Panel.
 - `C` and `P` do Copy/Paste
 - ComboBox in the north changes Look And Feel

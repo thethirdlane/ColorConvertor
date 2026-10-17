@@ -1,11 +1,11 @@
 package org.ttl.color.ui
 
-import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyles
 import org.ttl.color.events.ColorEvents
 import org.ttl.color.events.eventCentral
 import org.ttl.color.utils.ColorAndHex
 import org.ttl.color.utils.colorToRGBString
 import org.ttl.color.utils.hexStringToColorAndHexString
+import org.ttl.color.utils.hslStringToColorAndHex
 import org.ttl.color.utils.rgbStringToColorAndHexString
 import ttl.kotdsls.swing.Gbc
 import ttl.kotdsls.swing.frame
@@ -13,6 +13,7 @@ import ttl.kotdsls.swing.gbc
 import ttl.kotdsls.swing.ui.getMinFontSizeForScreen
 import ttl.kotdsls.swing.ui.setUIMinFontSize
 import java.awt.Color
+import java.awt.Color.red
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.GridBagLayout
@@ -56,7 +57,7 @@ class CombinedComboBoxModel<ColorAndHex>(private val capacity: Int) : DefaultCom
     }
 }
 
-class HexCellRenderer : DefaultListCellRenderer() {
+class HEXCellRenderer : DefaultListCellRenderer() {
     override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean,
                                               cellHasFocus: Boolean): Component {
         // Delegate base rendering logic (handles background selection, fonts, focus borders)
@@ -76,7 +77,8 @@ class HEXCellEditor : BasicComboBoxEditor() {
     override fun getItem(): Any? {
         val hexText = (editor as JTextField).text
         if (!hexText.isNullOrBlank()) {
-            val candh = hexStringToColorAndHexString(hexText)
+            val ttu = if(hexText.contains("#")) hexText else "#$hexText"
+            val candh = hexStringToColorAndHexString(ttu)
             // Return existing user object, or create a new instance if typed text is new
             return candh
         }
@@ -111,6 +113,42 @@ class RGBCellEditor : BasicComboBoxEditor() {
         } else {
             editor.text = ""
         }
+    }
+}
+
+class HSLCellEditor : BasicComboBoxEditor() {
+    private var currentItem: ColorAndHex? = null
+
+    override fun getItem(): Any? {
+        val hslText = (editor as JTextField).text
+        if (!hslText.isNullOrBlank()) {
+            val candh = hslStringToColorAndHex(hslText)
+            // Return existing user object, or create a new instance if typed text is new
+            return candh
+        }
+        return null
+    }
+
+    override fun setItem(candh: Any?) {
+        if (candh is ColorAndHex) {
+            editor.text = candh.hsl.toText
+        } else {
+            editor.text = ""
+        }
+    }
+}
+
+class HSLCellRenderer : DefaultListCellRenderer() {
+    override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean,
+                                              cellHasFocus: Boolean): Component {
+        // Delegate base rendering logic (handles background selection, fonts, focus borders)
+        val comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+
+        if (comp is JLabel && value is ColorAndHex) {
+            // Customize text display
+            comp.text = value.hsl.toText
+        }
+        return comp
     }
 }
 
@@ -177,7 +215,7 @@ object TestCombinedComboBoxModel {
         val comboBox2 = JComboBox(model).apply {
             isEditable = true
             prototypeDisplayValue = ColorAndHex(Color(88, 20, 255), "#5814FFFF")
-            renderer = HexCellRenderer()
+            renderer = HEXCellRenderer()
             editor = HEXCellEditor()
             addActionListener { event ->
                 if (event.actionCommand.startsWith("comboBoxEdited")) {
