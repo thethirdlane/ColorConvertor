@@ -6,10 +6,10 @@ import org.ttl.color.utils.ColorAndHex
 import org.ttl.color.utils.colorToHEXString
 import org.ttl.color.utils.colorToRGBString
 import org.ttl.color.utils.copy
-import org.ttl.color.utils.hexStringToColorAndHexString
+import org.ttl.color.utils.hexStringToColorAndHex
 import org.ttl.color.utils.hslStringToColorAndHex
 import org.ttl.color.utils.paste
-import org.ttl.color.utils.rgbStringToColorAndHexString
+import org.ttl.color.utils.rgbStringToColorAndHex
 import ttl.kotdsls.swing.Gbc
 import ttl.kotdsls.swing.button
 import ttl.kotdsls.swing.gbc
@@ -86,7 +86,7 @@ class ColorPanel(val title: String) : JPanel() {
                         else
                             colorToRGBString((editor.item as ColorAndHex).color)
                         if (input.isNotBlank()) {
-                            rgbStringToColorAndHexString(input)?.let { candh ->
+                            rgbStringToColorAndHex(input)?.let { candh ->
                                 val color = candh.color
                                 val hexText = candh.hexText
                                 //Add it to our Model
@@ -149,7 +149,7 @@ class ColorPanel(val title: String) : JPanel() {
                         if (input.isNotBlank()) {
                             val ttu = if(input.contains("#")) input else "#$input"
 
-                            hexStringToColorAndHexString(ttu)?.let { candh ->
+                            hexStringToColorAndHex(ttu)?.let { candh ->
                                 val color = candh.color
                                 val hexText = candh.hexText
                                 val colorStr = colorToRGBString(color)
@@ -297,7 +297,7 @@ class ColorPanel(val title: String) : JPanel() {
                 val hexStr = if (isForeground()) colorToHEXString(fg)
                 else colorToHEXString(bg)
 
-                rgbStringToColorAndHexString(rgbStr)?.let { candh ->
+                rgbStringToColorAndHex(rgbStr)?.let { candh ->
                     commonModel.addElement(candh)
                 }
 

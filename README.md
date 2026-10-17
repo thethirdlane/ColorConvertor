@@ -1,7 +1,7 @@
 # Color Convertor
 
 This is a very (very) simple program for converting colors from
-RGB to HEX to HSI and back.  No fancy color pickers or color wheels,
+RGB to HEX to HSL and back.  No fancy color pickers or color wheels,
 just basic cut and paste.  It came to be because none of the available
 color pickers on ubuntu were working for me.
 
@@ -66,6 +66,11 @@ copied and pasted from Gemini.  I have no idea how good the algorithms
 are, and have noticed that they tend to loose the plot when you you have
 rgb numbers higher than around 160 - the colors suggested suddenly become
 too dark.
+- Pro tip - if you are playing around with HSL values, it may be a good idea
+to keep all the values with 2 decimals, e.g. 120.00 for hue, 0.72 for 
+saturation etc.  That keeps the cursor in the combobox textfield in place.
+If you don't have the 2 decimals, the cursor moves to the end on update.
+And you wind up cursing the cursor.  And the developer.
 
 ## Implementation Notes 
 - Written in Kotlin

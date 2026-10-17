@@ -4,16 +4,15 @@ import org.ttl.color.events.ColorEvents
 import org.ttl.color.events.eventCentral
 import org.ttl.color.utils.ColorAndHex
 import org.ttl.color.utils.colorToRGBString
-import org.ttl.color.utils.hexStringToColorAndHexString
+import org.ttl.color.utils.hexStringToColorAndHex
 import org.ttl.color.utils.hslStringToColorAndHex
-import org.ttl.color.utils.rgbStringToColorAndHexString
+import org.ttl.color.utils.rgbStringToColorAndHex
 import ttl.kotdsls.swing.Gbc
 import ttl.kotdsls.swing.frame
 import ttl.kotdsls.swing.gbc
 import ttl.kotdsls.swing.ui.getMinFontSizeForScreen
 import ttl.kotdsls.swing.ui.setUIMinFontSize
 import java.awt.Color
-import java.awt.Color.red
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.GridBagLayout
@@ -78,7 +77,7 @@ class HEXCellEditor : BasicComboBoxEditor() {
         val hexText = (editor as JTextField).text
         if (!hexText.isNullOrBlank()) {
             val ttu = if(hexText.contains("#")) hexText else "#$hexText"
-            val candh = hexStringToColorAndHexString(ttu)
+            val candh = hexStringToColorAndHex(ttu)
             // Return existing user object, or create a new instance if typed text is new
             return candh
         }
@@ -100,7 +99,7 @@ class RGBCellEditor : BasicComboBoxEditor() {
     override fun getItem(): Any? {
         val rgbText = (editor as JTextField).text
         if (!rgbText.isNullOrBlank()) {
-            val candh = rgbStringToColorAndHexString(rgbText)
+            val candh = rgbStringToColorAndHex(rgbText)
             // Return existing user object, or create a new instance if typed text is new
             return candh
         }
@@ -198,7 +197,7 @@ object TestCombinedComboBoxModel {
                         colorToRGBString((editor.item as ColorAndHex).color)
                     if (input.isNotBlank()) {
 
-                        rgbStringToColorAndHexString(input)?.let { candh ->
+                        rgbStringToColorAndHex(input)?.let { candh ->
                             val color = candh.color
                             val hexText = candh.hexText
                             //Add it to our Model
@@ -225,7 +224,7 @@ object TestCombinedComboBoxModel {
                         (editor.item as ColorAndHex).hexText
                     if (input.isNotBlank()) {
 
-                        hexStringToColorAndHexString(input)?.let { candh ->
+                        hexStringToColorAndHex(input)?.let { candh ->
                             val color = candh.color
                             val hexText = candh.hexText
                             //Add it to our Model

@@ -11,12 +11,12 @@ import javax.swing.JComboBox
 import javax.swing.JTextField
 
 data class HSL(val hue: Float, val saturation: Float, val lightness: Float) {
-    val toText = String.format("%.03g, %.03g, %.03g", hue, saturation, lightness)
+    val toText = String.format("%.02f, %.02f, %.02f", hue, saturation, lightness)
 }
 
 data class ColorAndHex(val color: Color, val hexText: String, val hsl: HSL = color.toHSL())
 
-fun rgbStringToColorAndHexString(rgbString: String): ColorAndHex? {
+fun rgbStringToColorAndHex(rgbString: String): ColorAndHex? {
     val arr = rgbString.split(",\\s*".toRegex()).toTypedArray()
     if (arr.size < 3 || arr.size > 4) {
         logger.error("Input should be 3 or 4 comma seperated RGB[A] between 0 and 255")
@@ -44,7 +44,7 @@ fun rgbStringToColorAndHexString(rgbString: String): ColorAndHex? {
     return ColorAndHex(color, hex, hsl)
 }
 
-fun hexStringToColorAndHexString(input: String): ColorAndHex? {
+fun hexStringToColorAndHex(input: String): ColorAndHex? {
     var hexText = input.uppercase(getDefault())
     val ttu = if (hexText.startsWith("#")) {
         hexText.substring(1)
@@ -102,11 +102,6 @@ fun colorToRGBString(color: Color): String {
 fun colorToHEXString(color: Color): String {
     val str = String.format("#%02X%02X%02X%02X",
         color.red, color.green, color.blue, color.alpha)
-    return str
-}
-
-fun hslToHSLString(hsl: HSL) : String {
-    val str = String.format("%.3g, %.3g, %.3g, %.3gd", hsl.hue, hsl.saturation, hsl.lightness)
     return str
 }
 
@@ -230,7 +225,6 @@ fun copy(text: String) {
 
 fun paste(comboBox: JComboBox<*>) {
     getStringFromClipboard()?.let { pastedText ->
-//        comboBox.addItem(pastedText)
         comboBox.postActionEvent("comboBoxEdited:$pastedText")
     }
 }
